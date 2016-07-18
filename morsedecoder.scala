@@ -13,11 +13,11 @@ object Morsecoder {
         '5' -> ".....", '6' -> "-....", '7' -> "--...", '8' -> "---..",
         '9' -> "----.", '0' -> "-----",
         // Punctuation and blank spaces
-        ' ' -> " ", '.' -> ".-.-.-", ',' -> "--..--", '?' -> "..--..",
+        '@' -> ".--.-.", '.' -> ".-.-.-", ',' -> "--..--", '?' -> "..--..",
         '\'' -> ".----.", '!' -> "-.-.--", '/' -> "-..-.", '(' -> "-.--.",
         ')' -> "-.--.-", '&' -> ".-...", ':' -> "---...", ';' -> "-...-",
-        '+' -> ".-.-.", '-' -> "-....-", '_' -> "..--.-", '"' -> ".-..-.",
-        '@' -> ".--.-.")
+        '+' -> ".-.-.", '-' -> "-....-", '_' -> "..--.-", '"' -> ".-..-."
+        )
 
     val decoderMap = coderMap.map(_.swap)
 
@@ -29,13 +29,20 @@ object Morsecoder {
         ).mkString(" ") // and join the words
     }
 
-    def encode(s: String) = s.toUpperCase.map(coderMap(_)).mkString(" ")
+    def encode(s: String) = s.toUpperCase.split("""\s+""").map( (word) =>
+        word.map(coderMap(_)).mkString(" "))
+        .mkString("  ")
 
+    val helpMsg = """morsecoder {-e,-d} <arg>
+                    |    -e    encodes a given string <arg>
+                    |    -d    decodes a given morse code <arg>""".stripMargin('|')
     def main(args: Array[String]): Unit = {
-        require(args.length > 1)
-        args(0) match {
+        if (args.length < 2) 
+            println(helpMsg)
+        else args(0) match {
             case "-d" => println(decode(args(1)))
             case "-e" => println(encode(args(1)))
+            case _    => println(helpMsg)
         }
     }
 
